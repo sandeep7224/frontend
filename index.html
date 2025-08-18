@@ -206,8 +206,8 @@
 <style>
   .chatbot-fab {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 70px;
+    right: 70px;
     width: 60px;
     height: 60px;
     background: #007bff;
@@ -376,10 +376,27 @@
   </div>
 </div>
 
+<!-- ...existing code... -->
 <script>
+  // Show welcome message when chatbot opens
+  function showWelcomeMessage() {
+    const chatBox = document.getElementById("chat-box");
+    // Only show if chatBox is empty
+    if (chatBox.childElementCount === 0) {
+      const botDiv = document.createElement("div");
+      botDiv.className = "chat-message bot-message";
+      botDiv.innerText = "Hi, I am Bot. How can I help you?";
+      chatBox.appendChild(botDiv);
+    }
+  }
+
   // Toggle chatbot popup
   document.getElementById("chatbot-fab").onclick = function() {
-    document.getElementById("chatbot-popup").classList.toggle("active");
+    const popup = document.getElementById("chatbot-popup");
+    popup.classList.toggle("active");
+    if (popup.classList.contains("active")) {
+      showWelcomeMessage();
+    }
   };
   document.getElementById("chatbot-close").onclick = function() {
     document.getElementById("chatbot-popup").classList.remove("active");
@@ -418,10 +435,24 @@
       // Remove typing indicator
       chatBox.removeChild(typingDiv);
 
-      // Show bot reply
+      // Show bot reply (supports bullet points)
       const botDiv = document.createElement("div");
       botDiv.className = "chat-message bot-message";
-      botDiv.innerText = data.reply;
+      if (Array.isArray(data.reply)) {
+        // If reply is an array, show as bullet points
+        const ul = document.createElement("ul");
+        ul.style.paddingLeft = "18px";
+        ul.style.margin = "0";
+        data.reply.forEach(point => {
+          const li = document.createElement("li");
+          li.textContent = point;
+          ul.appendChild(li);
+        });
+        botDiv.appendChild(ul);
+      } else {
+        // Otherwise, show as plain text
+        botDiv.innerText = data.reply;
+      }
       chatBox.appendChild(botDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -442,6 +473,7 @@
       }
     });
 </script>
+<!-- ...existing code... -->
 
 <!-- ...existing code... -->
 
